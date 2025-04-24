@@ -7,6 +7,7 @@ export default defineConfig(() => ({
 	server: { fs: { allow: ['.', '../shared'] } },
 	build: {
 		target: 'chrome89',
+		minify: false, // 禁用代码压缩和混淆
 	},
 	plugins: [
 		federation({

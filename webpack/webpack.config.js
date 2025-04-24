@@ -1,9 +1,9 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin');
-const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+// const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 const path = require('path');
 const Dotenv = require('dotenv-webpack');
 const dependencies = require('./package.json').dependencies;
-
+const ModuleFederationPlugin = require('@module-federation/enhanced/webpack').ModuleFederationPlugin;
 const printCompilationMessage = require('./compilation.config.js');
 
 module.exports = {
@@ -14,6 +14,11 @@ module.exports = {
 
 	resolve: {
 		extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
+	},
+
+	// 添加 optimization 配置，禁用代码压缩和混淆
+	optimization: {
+		minimize: false,
 	},
 
 	devServer: {
@@ -69,6 +74,7 @@ module.exports = {
 			name: 'webpack',
 			// filename: 'remoteEntry.js',
 			// remoteType: 'module',
+			// remoteType: 'script',
 			remotes: {
 				remote: `promise import('http://localhost:4174/remoteEntry.js')
 				     .then(module => ({
@@ -76,7 +82,7 @@ module.exports = {
 				     init: arg => module.init(arg)
 				 }))`,
 				// remote: 'remote@http://localhost:4174/remoteEntry.js',
-				// remote: 'remote@http://localhost:4174/mf-manifest.json?v=' + Date.now(),
+				// remote: 'remote@http://localhost:4174/mf-manifest.json',
 			},
 			shared: {
 				react: {
@@ -85,6 +91,9 @@ module.exports = {
 				'react-dom': {
 					singleton: true,
 				},
+			},
+			experiments: {
+				provideExternalRuntime: true,
 			},
 		}),
 		// new ModuleFederationPlugin({
@@ -106,6 +115,7 @@ module.exports = {
 		// }),
 		new HtmlWebPackPlugin({
 			template: './src/index.html',
+			// excludeChunks: ['remoteEntry.js'],
 		}),
 		new Dotenv(),
 	],

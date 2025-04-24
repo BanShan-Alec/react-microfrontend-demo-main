@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => {
 		build: {
 			target: 'chrome89',
 			modulePreload: false,
+			minify: false, // 禁用代码压缩和混淆
 		},
 		plugins: [
 			{
@@ -30,8 +31,8 @@ export default defineConfig(({ mode }) => {
 				manifest: true,
 				exposes: {
 					'./remote-app': './src/App.tsx',
+					'./de'
 				},
-				remotes: {},
 				shared: {
 					react: {
 						requiredVersion: dependencies.react,
